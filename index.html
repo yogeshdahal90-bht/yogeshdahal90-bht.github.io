@@ -125,23 +125,27 @@
       }
 
       repos.forEach(repo => {
-        if (!repo.fork) {
-          const card = document.createElement('div');
-          card.className = 'repo-card';
-          card.innerHTML = `
-            <div>
-              <a class="repo-title" href="${repo.html_url}" target="_blank">📦 ${repo.name}</a>
-              <p class="repo-desc">${repo.description || 'No description provided.'}</p>
-            </div>
-            <div class="repo-meta">
-              ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
-              <span>⭐ ${repo.stargazers_count}</span>
-              <span>🍴 ${repo.forks_count}</span>
-            </div>
-          `;
-          container.appendChild(card);
-        }
-      });
+  if (!repo.fork) {
+    // Generates the live GitHub Pages URL for each repository
+    const liveUrl = `https://${repo.owner.login}.github.io/${repo.name}/`;
+
+    const card = document.createElement('div');
+    card.className = 'repo-card';
+    card.innerHTML = `
+      <div>
+        <a class="repo-title" href="${liveUrl}" target="_blank">🌐 ${repo.name}</a>
+        <p class="repo-desc">${repo.description || 'No description provided.'}</p>
+      </div>
+      <div class="repo-meta">
+        ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
+        <a href="${repo.html_url}" target="_blank" style="color: #8b949e; text-decoration: none;">💻 Source Code</a>
+        <span>⭐ ${repo.stargazers_count}</span>
+        <span>🍴 ${repo.forks_count}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+});
     })
     .catch(err => {
       console.error(err);
