@@ -3,116 +3,251 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My GitHub Portfolio</title>
+  <title>My Projects</title>
   <style>
     :root {
-      --bg: #0d1117;
-      --card-bg: #161b22;
-      --border: #30363d;
-      --text: #c9d1d9;
-      --text-link: #58a6ff;
-      --accent: #238636;
-      --badge-bg: #21262d;
+      --outer-bg: #e2dad5;
+      --canvas-bg: rgba(255, 252, 248, 0.65);
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(255, 255, 255, 0.9);
+      --text-main: #3a322d;
+      --text-sub: #786c65;
+      --accent: #d96b43;
+      --canvas-shadow: 0 30px 60px rgba(110, 95, 85, 0.18), 0 10px 20px rgba(0, 0, 0, 0.05);
+      --card-shadow: 0 10px 25px rgba(180, 160, 150, 0.12);
+      --card-shadow-hover: 0 18px 35px rgba(160, 135, 120, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--outer-bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Main Floating App Canvas Frame */
+    .app-canvas {
+      position: relative;
+      width: calc(100vw - 60px);
+      height: calc(100vh - 60px);
+      max-width: 1280px;
+      max-height: 900px;
+      background-color: var(--canvas-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--canvas-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Vibrant Mesh Gradient Background Curves */
+    .bg-mesh {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.85;
+    }
+
+    .blob-1 {
+      width: 600px;
+      height: 600px;
+      background: #fcd5ce; /* Soft Peach */
+      top: -100px;
+      left: -100px;
+    }
+
+    .blob-2 {
+      width: 650px;
+      height: 650px;
+      background: #ffb703; /* Vibrant Warm Gold */
+      top: 20%;
+      left: 15%;
+      opacity: 0.55;
+    }
+
+    .blob-3 {
+      width: 700px;
+      height: 700px;
+      background: #80ed99; /* Refreshing Mint */
+      bottom: -200px;
+      right: -100px;
+      opacity: 0.6;
+    }
+
+    .blob-4 {
+      width: 550px;
+      height: 550px;
+      background: #4cc9f0; /* Soft Cyan Teal */
+      bottom: -100px;
+      right: 25%;
+      opacity: 0.5;
+    }
+
+    .blob-5 {
+      width: 500px;
+      height: 500px;
+      background: #f72585; /* Vibrant Rose */
+      top: -150px;
+      right: -50px;
+      opacity: 0.35;
+    }
+
+    /* Scrollable Inner Container */
+    .content-area {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 60px 50px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
     }
 
     h1 {
       font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: -0.5px;
+      color: #2b231f;
       margin-bottom: 10px;
-      color: #fff;
     }
 
-    /* Grid Layout: Columns adjust automatically based on screen size */
+    header p {
+      color: var(--text-sub);
+      font-size: 1rem;
+      font-weight: 300;
+      margin: 0;
+    }
+
     .repo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 25px;
     }
 
-    /* Lively Hover Effects */
     .repo-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .repo-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      border-color: var(--text-link);
+      box-shadow: var(--card-shadow-hover);
+      background: rgba(255, 255, 255, 0.92);
+      border-color: #ffffff;
     }
 
     .repo-title {
       font-size: 1.25rem;
-      font-weight: bold;
-      color: var(--text-link);
+      font-weight: 600;
+      color: var(--accent);
       text-decoration: none;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       display: inline-block;
+      letter-spacing: -0.2px;
+      text-transform: capitalize;
     }
 
     .repo-title:hover {
-      text-decoration: underline;
+      color: #b84a23;
     }
 
     .repo-desc {
       font-size: 0.95rem;
-      color: #8b949e;
-      flex-grow: 1;
-      margin-bottom: 20px;
-      line-height: 1.4;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin: 0;
+      font-weight: 300;
     }
 
-    .repo-meta {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-size: 0.85rem;
-      color: #8b949e;
+    .status-msg {
+      text-align: center;
+      color: var(--text-sub);
+      font-weight: 300;
+      grid-column: 1 / -1;
+      padding: 40px;
     }
 
-    .badge {
-      background-color: var(--badge-bg);
-      padding: 3px 8px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+    @media (max-width: 768px) {
+      .app-canvas {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+      .content-area {
+        padding: 40px 24px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>⚡ My Projects</h1>
-    <p>Automatically synced from my GitHub account</p>
-  </header>
+  <!-- Outer Rounded Canvas Frame -->
+  <div class="app-canvas">
+    
+    <!-- Organic Color Mesh Background -->
+    <div class="bg-mesh">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+      <div class="blob blob-4"></div>
+      <div class="blob blob-5"></div>
+    </div>
 
-  <div id="repo-grid" class="repo-grid">Loading repositories...</div>
+    <!-- Scrollable Content -->
+    <div class="content-area">
+      <header>
+        <h1>Projects</h1>
+        <p>A curated collection of web spaces</p>
+      </header>
+
+      <div id="repo-grid" class="repo-grid">
+        <div class="status-msg">Gathering projects...</div>
+      </div>
+    </div>
+
+  </div>
 
   <script>
-  // Fetches the static JSON file created by GitHub Actions
   fetch('./repos.json')
     .then(response => {
-      if (!response.ok) {
-        throw new Error('repos.json not generated yet');
-      }
+      if (!response.ok) throw new Error('repos.json not available');
       return response.json();
     })
     .then(repos => {
@@ -120,35 +255,35 @@
       container.innerHTML = ''; 
 
       if (!Array.isArray(repos) || repos.length === 0) {
-        container.innerText = 'No public repositories found.';
+        container.innerHTML = '<div class="status-msg">No projects available at the moment.</div>';
         return;
       }
 
       repos.forEach(repo => {
-  if (!repo.fork) {
-    // Generates the live GitHub Pages URL for each repository
-    const liveUrl = `https://${repo.owner.login}.github.io/${repo.name}/`;
+        if (!repo.fork) {
+          const liveUrl = repo.name === `${repo.owner.login}.github.io`
+            ? `https://${repo.owner.login}.github.io/`
+            : `https://${repo.owner.login}.github.io/${repo.name}/`;
 
-    const card = document.createElement('div');
-    card.className = 'repo-card';
-    card.innerHTML = `
-      <div>
-        <a class="repo-title" href="${liveUrl}" target="_blank">🌐 ${repo.name}</a>
-        <p class="repo-desc">${repo.description || 'No description provided.'}</p>
-      </div>
-      <div class="repo-meta">
-        ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
-        <a href="${repo.html_url}" target="_blank" style="color: #8b949e; text-decoration: none;">💻 Source Code</a>
-        <span>⭐ ${repo.stargazers_count}</span>
-        <span>🍴 ${repo.forks_count}</span>
-      </div>
-    `;
-    container.appendChild(card);
-  }
-});
+          const cleanTitle = repo.name
+            .replace(/-/g, ' ')
+            .replace(/([a-z])([A-Z])/g, '$1 $2');
+
+          const card = document.createElement('div');
+          card.className = 'repo-card';
+          card.innerHTML = `
+            <a class="repo-title" href="${liveUrl}" target="_blank">${cleanTitle}</a>
+            <p class="repo-desc">${repo.description || 'Interactive web application and spatial project.'}</p>
+          `;
+          container.appendChild(card);
+        }
+      });
     })
     .catch(err => {
       console.error(err);
-      document.getElementById('repo-grid').innerText = 'Generating project list... If this is your first build, please trigger the action manually or wait 1 minute.';
+      document.getElementById('repo-grid').innerHTML = '<div class="status-msg">Unable to load project showcase right now.</div>';
     });
 </script>
+
+</body>
+</html>
