@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My GitHub Repositories</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    .repo-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+    .repo-card a { font-weight: bold; font-size: 1.2em; text-decoration: none; color: #0969da; }
+  </style>
+</head>
+<body>
+
+  <h1>My Projects</h1>
+  <div id="repo-list">Loading repositories...</div>
+
+  <script>
+    // REPLACE WITH YOUR GITHUB USERNAME
+    const username = 'YOUR_USERNAME'; 
+
+    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+      .then(response => response.json())
+      .then(repos => {
+        const container = document.getElementById('repo-list');
+        container.innerHTML = ''; // Clear loading text
+
+        repos.forEach(repo => {
+          // Skip forks or private repos if needed
+          if (!repo.fork) {
+            const card = document.createElement('div');
+            card.className = 'repo-card';
+            card.innerHTML = `
+              <a href="${repo.html_url}" target="_blank">${repo.name}</a>
+              <p>${repo.description || 'No description provided.'}</p>
+              <small>⭐ ${repo.stargazers_count} | 🍴 ${repo.forks_count} | Language: ${repo.language || 'N/A'}</small>
+            `;
+            container.appendChild(card);
+          }
+        });
+      })
+      .catch(err => {
+        document.getElementById('repo-list').innerText = 'Failed to load repos.';
+      });
+  </script>
+
+</body>
+</html>
