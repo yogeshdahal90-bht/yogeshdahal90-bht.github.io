@@ -107,14 +107,28 @@
   <div id="repo-grid" class="repo-grid">Loading repositories...</div>
 
   <script>
-    // REPLACE WITH YOUR GITHUB USERNAME
     const username = 'yogeshdahal90-bht'; 
 
     fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
       .then(repos => {
         const container = document.getElementById('repo-grid');
+        
+        if (!Array.isArray(repos)) {
+          throw new Error("Received invalid data from GitHub API");
+        }
+
         container.innerHTML = ''; 
+
+        if (repos.length === 0) {
+          container.innerText = 'No public repositories found.';
+          return;
+        }
 
         repos.forEach(repo => {
           if (!repo.fork) {
@@ -135,10 +149,8 @@
           }
         });
       })
-      .catch(() => {
-        document.getElementById('repo-grid').innerText = 'Failed to load repos.';
+      .catch(err => {
+        console.error("Fetch Error:", err);
+        document.getElementById('repo-grid').innerText = `Failed to load repos. (${err.message})`;
       });
   </script>
-
-</body>
-</html>
