@@ -107,50 +107,44 @@
   <div id="repo-grid" class="repo-grid">Loading repositories...</div>
 
   <script>
-    const username = 'yogeshdahal90-bht'; 
+  // Fetches the static JSON file created by GitHub Actions
+  fetch('./repos.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('repos.json not generated yet');
+      }
+      return response.json();
+    })
+    .then(repos => {
+      const container = document.getElementById('repo-grid');
+      container.innerHTML = ''; 
 
-    fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
+      if (!Array.isArray(repos) || repos.length === 0) {
+        container.innerText = 'No public repositories found.';
+        return;
+      }
+
+      repos.forEach(repo => {
+        if (!repo.fork) {
+          const card = document.createElement('div');
+          card.className = 'repo-card';
+          card.innerHTML = `
+            <div>
+              <a class="repo-title" href="${repo.html_url}" target="_blank">📦 ${repo.name}</a>
+              <p class="repo-desc">${repo.description || 'No description provided.'}</p>
+            </div>
+            <div class="repo-meta">
+              ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
+              <span>⭐ ${repo.stargazers_count}</span>
+              <span>🍴 ${repo.forks_count}</span>
+            </div>
+          `;
+          container.appendChild(card);
         }
-        return response.json();
-      })
-      .then(repos => {
-        const container = document.getElementById('repo-grid');
-        
-        if (!Array.isArray(repos)) {
-          throw new Error("Received invalid data from GitHub API");
-        }
-
-        container.innerHTML = ''; 
-
-        if (repos.length === 0) {
-          container.innerText = 'No public repositories found.';
-          return;
-        }
-
-        repos.forEach(repo => {
-          if (!repo.fork) {
-            const card = document.createElement('div');
-            card.className = 'repo-card';
-            card.innerHTML = `
-              <div>
-                <a class="repo-title" href="${repo.html_url}" target="_blank">📦 ${repo.name}</a>
-                <p class="repo-desc">${repo.description || 'No description provided.'}</p>
-              </div>
-              <div class="repo-meta">
-                ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
-                <span>⭐ ${repo.stargazers_count}</span>
-                <span>🍴 ${repo.forks_count}</span>
-              </div>
-            `;
-            container.appendChild(card);
-          }
-        });
-      })
-      .catch(err => {
-        console.error("Fetch Error:", err);
-        document.getElementById('repo-grid').innerText = `Failed to load repos. (${err.message})`;
       });
-  </script>
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('repo-grid').innerText = 'Generating project list... If this is your first build, please trigger the action manually or wait 1 minute.';
+    });
+</script>
