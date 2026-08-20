@@ -2,44 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My GitHub Repositories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My GitHub Portfolio</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
-    .repo-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
-    .repo-card a { font-weight: bold; font-size: 1.2em; text-decoration: none; color: #0969da; }
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-link: #58a6ff;
+      --accent: #238636;
+      --badge-bg: #21262d;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    /* Grid Layout: Columns adjust automatically based on screen size */
+    .repo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* Lively Hover Effects */
+    .repo-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .repo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border-color: var(--text-link);
+    }
+
+    .repo-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--text-link);
+      text-decoration: none;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .repo-title:hover {
+      text-decoration: underline;
+    }
+
+    .repo-desc {
+      font-size: 0.95rem;
+      color: #8b949e;
+      flex-grow: 1;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .repo-meta {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
+
+    .badge {
+      background-color: var(--badge-bg);
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
   </style>
 </head>
 <body>
 
-  <h1>My Projects</h1>
-  <div id="repo-list">Loading repositories...</div>
+  <header>
+    <h1>⚡ My Projects</h1>
+    <p>Automatically synced from my GitHub account</p>
+  </header>
+
+  <div id="repo-grid" class="repo-grid">Loading repositories...</div>
 
   <script>
     // REPLACE WITH YOUR GITHUB USERNAME
-    const username = 'yogeshdahal90-bht'; 
+    const username = 'YOUR_USERNAME'; 
 
-    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+    fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
       .then(response => response.json())
       .then(repos => {
-        const container = document.getElementById('repo-list');
-        container.innerHTML = ''; // Clear loading text
+        const container = document.getElementById('repo-grid');
+        container.innerHTML = ''; 
 
         repos.forEach(repo => {
-          // Skip forks or private repos if needed
           if (!repo.fork) {
             const card = document.createElement('div');
             card.className = 'repo-card';
             card.innerHTML = `
-              <a href="${repo.html_url}" target="_blank">${repo.name}</a>
-              <p>${repo.description || 'No description provided.'}</p>
-              <small>⭐ ${repo.stargazers_count} | 🍴 ${repo.forks_count} | Language: ${repo.language || 'N/A'}</small>
+              <div>
+                <a class="repo-title" href="${repo.html_url}" target="_blank">📦 ${repo.name}</a>
+                <p class="repo-desc">${repo.description || 'No description provided.'}</p>
+              </div>
+              <div class="repo-meta">
+                ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
+                <span>⭐ ${repo.stargazers_count}</span>
+                <span>🍴 ${repo.forks_count}</span>
+              </div>
             `;
             container.appendChild(card);
           }
         });
       })
-      .catch(err => {
-        document.getElementById('repo-list').innerText = 'Failed to load repos.';
+      .catch(() => {
+        document.getElementById('repo-grid').innerText = 'Failed to load repos.';
       });
   </script>
 
