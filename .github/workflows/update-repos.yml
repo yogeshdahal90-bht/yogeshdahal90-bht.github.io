@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write # Grants permission to commit the JSON file back to your repo
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
 
       - name: Fetch Repositories Data
         run: |
